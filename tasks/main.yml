@@ -1,0 +1,42 @@
+---
+
+- name: debug registry path
+  debug: msg="{{ registry_path }}"
+  tags: 
+  - registry-debug
+
+- name: add internal apt repo
+  apt_repository: repo="deb http://{{ apt_repo_host }}/deb/ amd64/" state=present
+
+- name: Install Kubernetes master component packages from internal repo
+  become: yes
+  apt: pkg={{ item }} state=present force="yes"
+  with_items:
+    - kubernetes-client
+    - kubernetes-master
+
+- name: include systemd plays
+  become: yes
+  include: systemd.yml
+  when: ansible_service_mgr == 'systemd'
+
+- name: include upstart plays
+  become: yes
+  include: upstart.yml
+  when: ansible_service_mgr == 'upstart' 
+
+- name: Start Kubernetes master component services
+  become: yes
+  service: name="{{ item }}" state=started
+  with_items:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+
+- name: Create directory containing SkyDNS service and controller configuration files
+  file: path="{{ ansible_user_dir }}/dns" state=directory
+
+- name: Include DNS configuration
+  become: yes
+  include: dns.yml
+  when: kubernetes_nameserver is defined and kubernetes_nameserver|length >= 7

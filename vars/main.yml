@@ -1,0 +1,17 @@
+--- 
+
+kubernetes_master_components:
+  - kube-apiserver
+  - kube-controller-manager
+  - kube-scheduler
+
+kubernetes_client_components:
+  - kubectl 
+
+kubernetes_dns_files:
+  - dns-service.yaml
+  - dns-controller.yaml
+
+env_vars:
+  KUBERNETES_API: "http://{{ kubernetes_master }}:8080"  
+  KUBERNETES_NAMESERVER: "{{ kubernetes_nameserver }}"

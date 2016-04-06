@@ -1,0 +1,11 @@
+---
+
+registry_path: "gcr.io"
+etcd_host: "{{ groups['kubernetes-master'].0 }}" 
+kubernetes_domain: kubernetes.default 
+kubernetes_master: "{{ groups['kubernetes-master'].0 }}" 
+dns_images:
+  etcd : "2.0.9"
+  kube2sky: "1.11" 
+  skydns: "2015-03-11-001"
+  pause: "0.8.0"

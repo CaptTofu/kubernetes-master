@@ -1,0 +1,20 @@
+---
+
+- name: Create SkyDNS directory 
+  file: path="/tmp/dns" state=directory
+
+- name: Render SkyDNS service and controller conf files
+  template: src="{{ item }}.j2" dest="/tmp/dns/{{ item }}"
+  with_items: "{{ kubernetes_dns_files }}"
+
+- name: kill DNS if running
+  ignore_errors: yes
+  shell: "/usr/bin/kubectl delete {{ item }} kube-dns"
+  with_items:
+    - rc
+    - service
+
+- name: start skydns service and controller
+  ignore_errors: yes
+  shell: "/usr/bin/kubectl create -f /tmp/dns/{{ item }}"
+  with_items: "{{ kubernetes_dns_files }}"

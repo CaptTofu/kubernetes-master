@@ -1,0 +1,10 @@
+---
+
+- name: Copy upstart configuration files
+  copy: src="{{ item }}.conf" dest="/etc/init/{{ item }}.conf"
+  with_items: "{{ kubernetes_master_components }}"
+
+- name: Render upstart defaults
+  template: src="{{ item }}.j2" dest="/etc/default/{{ item }}"
+  with_items: "{{ kubernetes_master_components }}"
+

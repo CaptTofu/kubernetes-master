@@ -1,0 +1,14 @@
+[Unit]
+Description=Kubernetes Scheduler service
+Documentation=https://github.com/GoogleCloudPlatform/kubernetes
+Requires=kube-apiserver.service
+After=kube-apiserver.service
+
+[Service]
+EnvironmentFile=/etc/environment
+ExecStart=/opt/bin/kube-scheduler \
+  --address=0.0.0.0 \
+  --master=127.0.0.1:8080 \
+  --v=0 
+Restart=always
+RestartSec=10
